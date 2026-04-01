@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gold Stars">
+<meta name="theme-color" content="#1a1625">
+<title>★ My Gold Stars ★</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1625;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 32px;
+  }
+
+  #app {
+    padding: 16px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .app-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    color: #C8C0FF;
+    margin-bottom: 4px;
+    padding-top: 16px;
+  }
+
+  .star-yellow { color: #FFD700; }
+
+  .app-subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #A89FCC;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .total-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #2a2040;
+    border-radius: 40px;
+    padding: 8px 20px;
+    margin-bottom: 16px;
+    border: 2px dashed #6B5FBB;
+  }
+
+  .total-count { font-size: 22px; font-weight: 600; color: #C8C0FF; }
+  .total-label { font-size: 13px; color: #A89FCC; font-weight: 600; }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #A89FCC;
+    margin-bottom: 8px;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .log-form {
+    background: #2a2040;
+    border-radius: 16px;
+    border: 1.5px solid #6B5FBB;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .cat-btn {
+    border: 2px solid #3d3060;
+    border-radius: 12px;
+    padding: 8px 4px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 56px;
+    background: #231d38;
+    color: #888;
+    transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cat-btn .cat-icon { font-size: 16px; }
+  .cat-btn .cat-name { font-size: 11px; }
+  .cat-btn:active { transform: scale(0.96); }
+
+  .cat-btn.selected-0 { background: #4a1528; color: #F4A0BC; border-color: #D4537E; border-width: 2.5px; transform: scale(1.05); }
+  .cat-btn.selected-1 { background: #3d2800; color: #FAC775; border-color: #BA7517; border-width: 2.5px; transform: scale(1.05); }
+  .cat-btn.selected-2 { background: #0a2e22; color: #5DCAA5; border-color: #1D9E75; border-width: 2.5px; transform: scale(1.05); }
+  .cat-btn.selected-3 { background: #26215C; color: #AFA9EC; border-color: #7F77DD; border-width: 2.5px; transform: scale(1.05); }
+  .cat-btn.selected-4 { background: #3d1a0a; color: #F0997B; border-color: #D85A30; border-width: 2.5px; transform: scale(1.05); }
+  .cat-btn.selected-5 { background: #042c53; color: #85B7EB; border-color: #378ADD; border-width: 2.5px; transform: scale(1.05); }
+
+  .note-input {
+    width: 100%;
+    border: 1.5px solid #6B5FBB;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    background: #1a1625;
+    color: #C8C0FF;
+    margin-bottom: 8px;
+    outline: none;
+  }
+  .note-input::placeholder { color: #6B5FBB; }
+  .note-input:focus { border-color: #9D94E8; }
+
+  .add-btn {
+    width: 100%;
+    background: #534AB7;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .add-btn:active { background: #3C3489; transform: scale(0.97); }
+
+  .stars-wall {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    min-height: 48px;
+    background: #2a2040;
+    border-radius: 16px;
+    border: 1.5px dashed #6B5FBB;
+    padding: 12px;
+  }
+
+  .star-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 20px;
+    padding: 4px 6px 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    background: #231d38;
+    color: #C8C0FF;
+    border: 1px solid #3d3060;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: #6B5FBB;
+    line-height: 1;
+    padding: 2px 4px;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .remove-btn:active { color: #E24B4A; }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .empty-msg { font-size: 13px; color: #6B5FBB; text-align: center; width: 100%; padding: 8px 0; }
+
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+
+  .cal-nav {
+    background: #2a2040;
+    border: 1.5px solid #6B5FBB;
+    border-radius: 8px;
+    width: 36px; height: 36px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #A89FCC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cal-nav:active { background: #3d3060; }
+
+  .cal-month { font-size: 15px; font-weight: 600; color: #C8C0FF; }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    background: #2a2040;
+    border-radius: 16px;
+    border: 1.5px solid #6B5FBB;
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .cal-day-name { font-size: 10px; font-weight: 700; text-align: center; color: #A89FCC; padding-bottom: 4px; }
+
+  .cal-cell {
+    border-radius: 10px;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B5FBB;
+  }
+
+  .cal-cell.today { background: #3d3060; border: 2px solid #9D94E8; color: #C8C0FF; }
+  .cal-cell.has-stars { background: #2e2550; cursor: pointer; }
+  .cal-cell.has-stars:active { background: #3d3060; }
+  .cal-star-count { font-size: 10px; font-weight: 700; color: #A89FCC; }
+  .cal-star-icon { font-size: 16px; line-height: 1; }
+  .cal-empty { opacity: 0; pointer-events: none; }
+
+  .popover {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #2a2040;
+    border-top: 1.5px solid #6B5FBB;
+    border-radius: 20px 20px 0 0;
+    padding: 16px;
+    z-index: 999;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  .popover.visible { display: block; }
+  .popover-title { font-weight: 600; color: #C8C0FF; margin-bottom: 8px; font-size: 14px; }
+  .popover-item { color: #A89FCC; padding: 4px 0; font-size: 13px; border-bottom: 1px solid #3d3060; }
+  .popover-item:last-child { border-bottom: none; }
+  .popover-close {
+    width: 100%;
+    background: #534AB7;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+  .popover-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+  }
+  .popover-overlay.visible { display: block; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #A89FCC; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="app-title"><span class="star-yellow">★</span> My Gold Stars <span class="star-yellow">★</span></div>
+  <div class="app-subtitle">Every win counts, let's celebrate!</div>
+
+  <div class="total-badge">
+    <span style="font-size:22px;color:#FFD700;">★</span>
+    <span class="total-count" id="totalCount">0</span>
+    <span class="total-label">stars earned</span>
+  </div>
+
+  <div class="section-label">Log a win</div>
+  <div class="log-form">
+    <div class="cat-grid" id="catGrid"></div>
+    <input class="note-input" id="noteInput" placeholder="What did you achieve? (optional)" maxlength="120" />
+    <button class="add-btn" onclick="addStar()">★ Add my gold star!</button>
+  </div>
+
+  <div class="section-label">My stars</div>
+  <div class="stars-wall" id="starsWall">
+    <div class="empty-msg">Your stars will appear here!</div>
+  </div>
+
+  <div class="section-label" style="margin-top:8px;">Calendar</div>
+  <div class="cal-header">
+    <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
+    <div class="cal-month" id="calMonth"></div>
+    <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="popover-overlay" id="popoverOverlay" onclick="hidePopover()"></div>
+<div class="popover" id="popover">
+  <div class="popover-title" id="popoverTitle"></div>
+  <div id="popoverBody"></div>
+  <button class="popover-close" onclick="hidePopover()">Close</button>
+</div>
+
+<script>
+const CATS = [
+  { name: 'Big project', cls: 0 },
+  { name: 'Admin done',  cls: 1 },
+  { name: 'People win',  cls: 2 },
+  { name: 'Creative',    cls: 3 },
+  { name: 'Hard convo',  cls: 4 },
+  { name: 'Learning',    cls: 5 },
+];
+const DOT_COLORS = ['#D4537E','#BA7517','#1D9E75','#7F77DD','#D85A30','#378ADD'];
+
+let stars = [];
+let selectedCat = null;
+let calYear, calMonth;
+
+try { const s = localStorage.getItem('goldStars3'); if(s) stars = JSON.parse(s); } catch(e) {}
+
+const now = new Date();
+calYear = now.getFullYear(); calMonth = now.getMonth();
+
+function save() { try { localStorage.setItem('goldStars3', JSON.stringify(stars)); } catch(e) {} }
+
+function buildCatGrid() {
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = '';
+  CATS.forEach((c, i) => {
+    const btn = document.createElement('button');
+    const isSelected = selectedCat === i;
+    btn.className = 'cat-btn' + (isSelected ? ' selected-' + i : '');
+    btn.innerHTML = '<span class="cat-icon" style="color:' + (isSelected ? DOT_COLORS[i] : '#FFD700') + '">★</span><span class="cat-name">' + c.name + '</span>';
+    btn.onclick = () => { selectedCat = selectedCat === i ? null : i; buildCatGrid(); };
+    grid.appendChild(btn);
+  });
+}
+
+function addStar() {
+  if (selectedCat === null) { alert('Pick a category first!'); return; }
+  const note = document.getElementById('noteInput').value.trim();
+  stars.unshift({ id: Date.now(), cat: selectedCat, note: note || CATS[selectedCat].name, date: new Date().toISOString().slice(0,10) });
+  save();
+  document.getElementById('noteInput').value = '';
+  selectedCat = null;
+  buildCatGrid(); renderWall(); renderCal(); renderLegend(); updateTotal();
+  const badge = document.querySelector('.total-badge');
+  badge.style.transition = 'transform 0.15s';
+  badge.style.transform = 'scale(1.1)';
+  setTimeout(() => { badge.style.transform = 'scale(1)'; }, 200);
+}
+
+function removeStar(id) {
+  if (!confirm('Remove this star?')) return;
+  stars = stars.filter(s => s.id !== id); save();
+  renderWall(); renderCal(); updateTotal();
+}
+
+function renderWall() {
+  const wall = document.getElementById('starsWall');
+  if (!stars.length) { wall.innerHTML = '<div class="empty-msg">Your stars will appear here!</div>'; return; }
+  wall.innerHTML = '';
+  stars.slice(0,60).forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'star-chip';
+    chip.innerHTML =
+      '<span style="font-size:13px;color:' + DOT_COLORS[s.cat] + '">★</span>' +
+      '<span>' + s.note.slice(0,22) + '</span>' +
+      '<button class="remove-btn" onclick="removeStar(' + s.id + ')">✕</button>';
+    wall.appendChild(chip);
+  });
+  if (stars.length > 60) {
+    const m = document.createElement('div');
+    m.className = 'empty-msg'; m.style.width = '100%';
+    m.textContent = '+ ' + (stars.length - 60) + ' more stars!';
+    wall.appendChild(m);
+  }
+}
+
+function updateTotal() { document.getElementById('totalCount').textContent = stars.length; }
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCal();
+}
+
+function renderCal() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonth').textContent = months[calMonth] + ' ' + calYear;
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day-name'; cell.textContent = d;
+    grid.appendChild(cell);
+  });
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0,10);
+  for (let i = 0; i < firstDay; i++) {
+    const b = document.createElement('div'); b.className = 'cal-cell cal-empty'; grid.appendChild(b);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const dayStars = stars.filter(s => s.date === ds);
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (ds === todayStr ? ' today' : '') + (dayStars.length ? ' has-stars' : '');
+    if (dayStars.length) {
+      const icon = document.createElement('div');
+      icon.className = 'cal-star-icon';
+      icon.style.color = DOT_COLORS[dayStars[0].cat];
+      icon.textContent = '★';
+      const count = document.createElement('div');
+      count.className = 'cal-star-count';
+      count.textContent = dayStars.length > 1 ? 'x' + dayStars.length : '';
+      cell.appendChild(icon); cell.appendChild(count);
+      cell.onclick = () => showPopover(ds, dayStars);
+    } else {
+      const n = document.createElement('span'); n.textContent = d; cell.appendChild(n);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function showPopover(ds, dayStars) {
+  document.getElementById('popoverTitle').textContent = ds;
+  document.getElementById('popoverBody').innerHTML = dayStars.map(s =>
+    '<div class="popover-item" style="color:' + DOT_COLORS[s.cat] + '">★ ' + s.note + '</div>'
+  ).join('');
+  document.getElementById('popover').classList.add('visible');
+  document.getElementById('popoverOverlay').classList.add('visible');
+}
+function hidePopover() {
+  document.getElementById('popover').classList.remove('visible');
+  document.getElementById('popoverOverlay').classList.remove('visible');
+}
+
+function renderLegend() {
+  const leg = document.getElementById('legend');
+  leg.innerHTML = '';
+  CATS.forEach((c, i) => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = '<div class="legend-dot" style="background:' + DOT_COLORS[i] + '"></div><span>' + c.name + '</span>';
+    leg.appendChild(item);
+  });
+}
+
+buildCatGrid(); renderWall(); renderCal(); renderLegend(); updateTotal();
+</script>
+</body>
+</html>
