@@ -323,11 +323,11 @@
   <div class="legend" id="legend"></div>
 </div>
 
-<div class="popover-overlay" id="popoverOverlay" onclick="hidePopover()"></div>
+<div class="popover-overlay" id="popoverOverlay"></div>
 <div class="popover" id="popover">
   <div class="popover-title" id="popoverTitle"></div>
   <div id="popoverBody"></div>
-  <button class="popover-close" onclick="hidePopover()">Close</button>
+  <button class="popover-close" id="popoverClose">Close</button>
 </div>
 
 <script>
@@ -461,10 +461,14 @@ function showPopover(ds, dayStars) {
   document.getElementById('popover').classList.add('visible');
   document.getElementById('popoverOverlay').classList.add('visible');
 }
+
 function hidePopover() {
   document.getElementById('popover').classList.remove('visible');
   document.getElementById('popoverOverlay').classList.remove('visible');
 }
+
+document.getElementById('popoverClose').addEventListener('click', hidePopover);
+document.getElementById('popoverOverlay').addEventListener('click', hidePopover);
 
 function renderLegend() {
   const leg = document.getElementById('legend');
