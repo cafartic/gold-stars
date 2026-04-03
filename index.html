@@ -105,7 +105,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .cat-btn .cat-icon { font-size: 16px; }
+  .cat-btn .cat-icon { font-size: 28px; }
   .cat-btn .cat-name { font-size: 11px; }
   .cat-btn:active { transform: scale(0.96); }
 
@@ -347,8 +347,13 @@ let calYear, calMonth;
 
 try { const s = localStorage.getItem('goldStars3'); if(s) stars = JSON.parse(s); } catch(e) {}
 
-const now = new Date();
-calYear = now.getFullYear(); calMonth = now.getMonth();
+function getAESTDateStr() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' });
+}
+
+const aestNow = getAESTDateStr();
+calYear = parseInt(aestNow.slice(0,4));
+calMonth = parseInt(aestNow.slice(5,7)) - 1;
 
 function save() { try { localStorage.setItem('goldStars3', JSON.stringify(stars)); } catch(e) {} }
 
@@ -359,7 +364,7 @@ function buildCatGrid() {
     const btn = document.createElement('button');
     const isSelected = selectedCat === i;
     btn.className = 'cat-btn' + (isSelected ? ' selected-' + i : '');
-    btn.innerHTML = '<span class="cat-icon" style="color:' + (isSelected ? DOT_COLORS[i] : '#FFD700') + '">★</span><span class="cat-name">' + c.name + '</span>';
+    btn.innerHTML = '<span class="cat-icon" style="color:' + DOT_COLORS[i] + '">★</span><span class="cat-name">' + c.name + '</span>';
     btn.onclick = () => { selectedCat = selectedCat === i ? null : i; buildCatGrid(); };
     grid.appendChild(btn);
   });
@@ -368,7 +373,7 @@ function buildCatGrid() {
 function addStar() {
   if (selectedCat === null) { alert('Pick a category first!'); return; }
   const note = document.getElementById('noteInput').value.trim();
-  stars.unshift({ id: Date.now(), cat: selectedCat, note: note || CATS[selectedCat].name, date: new Date().toISOString().slice(0,10) });
+  stars.unshift({ id: Date.now(), cat: selectedCat, note: note || CATS[selectedCat].name, date: getAESTDateStr() });
   save();
   document.getElementById('noteInput').value = '';
   selectedCat = null;
@@ -387,9 +392,11 @@ function removeStar(id) {
 
 function renderWall() {
   const wall = document.getElementById('starsWall');
-  if (!stars.length) { wall.innerHTML = '<div class="empty-msg">Your stars will appear here!</div>'; return; }
+  const todayStr = getAESTDateStr();
+  const todayStars = stars.filter(s => s.date === todayStr);
+  if (!todayStars.length) { wall.innerHTML = '<div class="empty-msg">No stars yet today — go get one!</div>'; return; }
   wall.innerHTML = '';
-  stars.slice(0,60).forEach(s => {
+  todayStars.forEach(s => {
     const chip = document.createElement('div');
     chip.className = 'star-chip';
     chip.innerHTML =
@@ -398,12 +405,6 @@ function renderWall() {
       '<button class="remove-btn" onclick="removeStar(' + s.id + ')">✕</button>';
     wall.appendChild(chip);
   });
-  if (stars.length > 60) {
-    const m = document.createElement('div');
-    m.className = 'empty-msg'; m.style.width = '100%';
-    m.textContent = '+ ' + (stars.length - 60) + ' more stars!';
-    wall.appendChild(m);
-  }
 }
 
 function updateTotal() { document.getElementById('totalCount').textContent = stars.length; }
@@ -427,7 +428,7 @@ function renderCal() {
   });
   const firstDay = new Date(calYear, calMonth, 1).getDay();
   const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = getAESTDateStr();
   for (let i = 0; i < firstDay; i++) {
     const b = document.createElement('div'); b.className = 'cal-cell cal-empty'; grid.appendChild(b);
   }
